@@ -39,9 +39,15 @@ class GoodsList {
     }, initialValue)
     console.log(sum);
   }
+  // calculatePrice() {  решение преподавателя
+  //   return this.list.reduce((prev, { price }) => {
+  //     return prev + price;
+  //   }, 0)
+  // }
 };
 
 const goodsList = new GoodsList();
 goodsList.fetchGoods();
 goodsList.render();
 goodsList.sumPrice();
+// const element = goodsList.calculatePrice();  решение преподавателя
