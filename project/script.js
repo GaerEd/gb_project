@@ -1,29 +1,43 @@
-'use strict';
+// 'use strict';
 
 const goods = [
-  { title: 'Shirt', price: 150 },
-  { title: 'Socks', price: 50 },
-  { title: 'Jacket', price: 350 },
-  { title: 'Shoes', price: 250 },
+  { product_name: 'Shirt', price: 150 },
+  { product_name: 'Socks', price: 50 },
+  { product_name: 'Jacket', price: 350 },
+  { product_name: 'Shoes', price: 250 },
 ];
 
 class GoodsItem {
-  constructor ({ title = '', price = 0 }) {
-    this.title = title;
+  constructor ({ product_name = '', price = 0 }) {
+    this.product_name = product_name;
     this.price = price;
   }
   render() {
     return `<div class="goods-item">
-            <h3>Наименование товара: ${this.title}</h3>
+            <h3>Наименование товара: ${this.product_name}</h3>
             <p>Цена товара: ${this.price}</p>
           </div>`;
   }
 };
 
+const GET_GOODS_ITEMS = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses/catalogData.json';
+
+function service(callback) {
+  xhr = new XMLHttpRequest();
+  xhr.open('GET', GET_GOODS_ITEMS);
+  xhr.send();
+  xhr.onload = () => {
+    callback(JSON.parse(xhr.response));
+  }
+};
+
 class GoodsList {
   list = [];
-  fetchGoods() {
-    this.list = goods;
+  fetchGoods(callback) {
+    service((data) => {
+      this.list = data;
+      callback()
+    })
   }
   render() {
     let goodsList = this.list.map(item => {
@@ -47,7 +61,11 @@ class GoodsList {
 };
 
 const goodsList = new GoodsList();
-goodsList.fetchGoods();
-goodsList.render();
+goodsList.fetchGoods(() => {
+  goodsList.render();
+});
+
 goodsList.sumPrice();
+
+
 // const element = goodsList.calculatePrice();  решение преподавателя
