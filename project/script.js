@@ -1,4 +1,4 @@
-// 'use strict';
+'use strict';
 
 const goods = [
   { product_name: 'Shirt', price: 150 },
@@ -22,8 +22,11 @@ class GoodsItem {
 
 const GET_GOODS_ITEMS = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses/catalogData.json';
 
+const GET_BASKET_GOODS_ITEMS = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses/getBasket.json';
+
+
 function service(callback) {
-  xhr = new XMLHttpRequest();
+  let xhr = new XMLHttpRequest();
   xhr.open('GET', GET_GOODS_ITEMS);
   xhr.send();
   xhr.onload = () => {
@@ -31,41 +34,52 @@ function service(callback) {
   }
 };
 
-class GoodsList {
-  list = [];
+class GoodsList { 
+  items = [];
   fetchGoods(callback) {
     service((data) => {
-      this.list = data;
+      this.items = data;
       callback()
     })
   }
   render() {
-    let goodsList = this.list.map(item => {
+    let goodsList = this.items.map(item => {
       const goodsItem = new GoodsItem(item)
       return goodsItem.render();
     }).join('');
-    document.querySelector('.goods-list').innerHTML = goodsList;
+    document.querySelector('.goods-items').innerHTML = goodsList;
   }
   sumPrice() {
     let initialValue = 0;
-    const sum = this.list.reduce(function(acc, currentValue) {
+    const sum = this.items.reduce(function(acc, currentValue) {
       return acc + currentValue.price
     }, initialValue)
     console.log(sum);
   }
   // calculatePrice() {  решение преподавателя
-  //   return this.list.reduce((prev, { price }) => {
+  //   return this.items.reduce((prev, { price }) => {
   //     return prev + price;
   //   }, 0)
   // }
 };
 
+class BasketGoodsList {
+  items = []
+  fetchGoods() {
+    service(GET_BASKET_GOODS_ITEMS, (data) => {
+      this.items = data.contents;
+    })
+  }
+}
+
 const goodsList = new GoodsList();
 goodsList.fetchGoods(() => {
   goodsList.render();
 });
-
 goodsList.sumPrice();
+
+const BasketGoodsList = new BasketGoodsList();
+BasketGoodsList.fetchGoods();
 
 
 // const element = goodsList.calculatePrice();  решение преподавателя
